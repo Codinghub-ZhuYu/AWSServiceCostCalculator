@@ -1,4 +1,5 @@
 import pandas as pd
+import csv
 
 # environment varirables
 ZHYProductcodeList = ['AmazonEC2','AmazonS3','AmazonRDS','AmazonES', 'AWSDirectConnect','AWSDataTransfer', 
@@ -22,13 +23,19 @@ newdf = df[columneNames]
 ZHYdf = newdf[(newdf.SellerOfRecord == ZHYSOR) & (newdf.RecordType == PayerRecordType)]
 BJSdf = newdf[(newdf.SellerOfRecord == BJSSOR) & (newdf.RecordType == PayerRecordType)]
 
-print("ZHY serviceName, Cost***")
-for i in ZHYProductcodeList:
-    ZHYProdDF = ZHYdf[(ZHYdf.ProductCode == i )]
-    ZHYCostDF = ZHYProdDF[[CostBeforeTaxColumne]].sum(axis=0)
-    print( i , ',',ZHYCostDF[CostBeforeTaxColumne] )
-print("BJS serviceName, Cost***")
-for i in BJSProductcodeList:
-    BJSProdDF = BJSdf[(BJSdf.ProductCode == i )]
-    BJSCostDF = BJSProdDF[[CostBeforeTaxColumne]].sum(axis=0)
-    print( i , ',',BJSCostDF[CostBeforeTaxColumne] )
+with open("./PythonProject/result.csv", "w", newline='') as csv_file:
+    writer = csv.writer(csv_file)
+    csv_head = ["ServiceName", "Cost"] 
+    writer.writerow(csv_head)
+    writer.writerow(["ZHY ******"])
+    for i in ZHYProductcodeList:
+        ZHYProdDF = ZHYdf[(ZHYdf.ProductCode == i )]
+        ZHYCostDF = ZHYProdDF[[CostBeforeTaxColumne]].sum(axis=0)
+        writer.writerow([i,ZHYCostDF[CostBeforeTaxColumne]])
+    writer.writerow(["BJS ******"])
+    for i in BJSProductcodeList:
+        BJSProdDF = BJSdf[(BJSdf.ProductCode == i )]
+        BJSCostDF = BJSProdDF[[CostBeforeTaxColumne]].sum(axis=0)
+        writer.writerow([i, BJSCostDF[CostBeforeTaxColumne]])
+       
+
